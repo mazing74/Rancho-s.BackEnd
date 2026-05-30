@@ -1,0 +1,134 @@
+[
+  {
+    "Name": "New Items",
+    "NameAr": "عناصر جديدة",
+    "Description": "Latest additions to the Rancho's menu",
+    "DescriptionAr": "أحدث الإضافات لقائمة رانشوز",
+    "ImageUrl": "/images/categories/new-items.jpg",
+    "DisplayOrder": 1,
+    "IsActive": true,
+    "CreatedAt": "2024-01-01T00:00:00Z",
+    "UpdatedAt": null
+  },
+  {
+    "Name": "Beef Burger",
+    "NameAr": "برجر لحم",
+    "Description": "100% pure beef grilled burgers",
+    "DescriptionAr": "برجر لحم مشوي ١٠٠٪ لحم طازج",
+    "ImageUrl": "/images/categories/beef-burger.jpg",
+    "DisplayOrder": 2,
+    "IsActive": true,
+    "CreatedAt": "2024-01-01T00:00:00Z",
+    "UpdatedAt": null
+  },
+  {
+    "Name": "Fried Chicken",
+    "NameAr": "فراخ مقلية",
+    "Description": "Daily fresh fried chicken sandwiches",
+    "DescriptionAr": "ساندوتشات فراخ مقلية طازجة يومياً",
+    "ImageUrl": "/images/categories/fried-chicken.jpg",
+    "DisplayOrder": 3,
+    "IsActive": true,
+    "CreatedAt": "2024-01-01T00:00:00Z",
+    "UpdatedAt": null
+  },
+  {
+    "Name": "Tender Boxes",
+    "NameAr": "صناديق تيندر",
+    "Description": "Crispy chicken tender boxes with sauces",
+    "DescriptionAr": "صناديق تيندر تشيكن مقرمشة مع صوص",
+    "ImageUrl": "/images/categories/tender-boxes.jpg",
+    "DisplayOrder": 4,
+    "IsActive": true,
+    "CreatedAt": "2024-01-01T00:00:00Z",
+    "UpdatedAt": null
+  },
+  {
+    "Name": "Fried Chicken Boxes",
+    "NameAr": "صناديق فرايد تشيكن",
+    "Description": "Fried chicken family sharing boxes",
+    "DescriptionAr": "صناديق فرايد تشيكن للمشاركة",
+    "ImageUrl": "/images/categories/fried-chicken-boxes.jpg",
+    "DisplayOrder": 5,
+    "IsActive": true,
+    "CreatedAt": "2024-01-01T00:00:00Z",
+    "UpdatedAt": null
+  },
+  {
+    "Name": "Filler Sandwiches",
+    "NameAr": "ساندوتشات فيلر",
+    "Description": "Loaded filler sandwiches with unique toppings",
+    "DescriptionAr": "ساندوتشات فيلر محشية بمكونات مميزة",
+    "ImageUrl": "/images/categories/filler-sandwiches.jpg",
+    "DisplayOrder": 6,
+    "IsActive": true,
+    "CreatedAt": "2024-01-01T00:00:00Z",
+    "UpdatedAt": null
+  },
+  {
+    "Name": "Mini Sandwiches",
+    "NameAr": "ساندوتشات ميني",
+    "Description": "Smaller sized sandwiches perfect for a lighter bite",
+    "DescriptionAr": "ساندوتشات صغيرة الحجم",
+    "ImageUrl": "/images/categories/mini-sandwiches.jpg",
+    "DisplayOrder": 7,
+    "IsActive": true,
+    "CreatedAt": "2024-01-01T00:00:00Z",
+    "UpdatedAt": null
+  },
+  {
+    "Name": "Pasta Meals",
+    "NameAr": "وجبات باستا",
+    "Description": "Delicious pasta meals with various proteins and sauces",
+    "DescriptionAr": "وجبات مكرونة لذيذة مع بروتينات وصوصات متنوعة",
+    "ImageUrl": "/images/categories/pasta-meals.jpg",
+    "DisplayOrder": 8,
+    "IsActive": true,
+    "CreatedAt": "2024-01-01T00:00:00Z",
+    "UpdatedAt": null
+  },
+  {
+    "Name": "Rice Meals",
+    "NameAr": "وجبات أرز",
+    "Description": "Rice meals with grilled chicken, fried chicken, and beef",
+    "DescriptionAr": "وجبات أرز مع دجاج مشوي أو مقلي أو لحم",
+    "ImageUrl": "/images/categories/rice-meals.jpg",
+    "DisplayOrder": 9,
+    "IsActive": true,
+    "CreatedAt": "2024-01-01T00:00:00Z",
+    "UpdatedAt": null
+  },
+  {
+    "Name": "Family Boxes",
+    "NameAr": "صناديق العيلة",
+    "Description": "Family sharing boxes with burgers, chicken, fries and drinks",
+    "DescriptionAr": "صناديق مشاركة للعيلة مع برجر وتشيكن وفرايز ومشروب",
+    "ImageUrl": "/images/categories/family-boxes.jpg",
+    "DisplayOrder": 10,
+    "IsActive": true,
+    "CreatedAt": "2024-01-01T00:00:00Z",
+    "UpdatedAt": null
+  },
+  {
+    "Name": "Sides",
+    "NameAr": "إضافات",
+    "Description": "Fries, cheese sticks, onion rings and more",
+    "DescriptionAr": "بطاطس وأصابع جبنة وحلقات بصل والمزيد",
+    "ImageUrl": "/images/categories/sides.jpg",
+    "DisplayOrder": 11,
+    "IsActive": true,
+    "CreatedAt": "2024-01-01T00:00:00Z",
+    "UpdatedAt": null
+  },
+  {
+    "Name": "Drinks",
+    "NameAr": "مشروبات",
+    "Description": "Sodas, fresh drinks and Rancho's signature beverages",
+    "DescriptionAr": "مشروبات غازية وعصائر طازجة ومشروبات رانشوز المميزة",
+    "ImageUrl": "/images/categories/drinks.jpg",
+    "DisplayOrder": 12,
+    "IsActive": true,
+    "CreatedAt": "2024-01-01T00:00:00Z",
+    "UpdatedAt": null
+  }
+]

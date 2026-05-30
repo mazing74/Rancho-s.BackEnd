@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="Rancho`s&amp;Wilson/Rancho`s&amp;Wilson.Api.csproj" />
+  <Project Path="Rancho`s.core/Rancho`s.core.csproj" />
+  <Project Path="Rancho`s.Repository/Rancho`s.Repository.csproj" />
+  <Project Path="Rancho`s.Services/Rancho`s.Services.csproj" />
+</Solution>

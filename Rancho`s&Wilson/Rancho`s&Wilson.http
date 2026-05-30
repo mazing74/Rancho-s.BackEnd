@@ -1,0 +1,6 @@
+@Rancho_s_Wilson_HostAddress = http://localhost:5182
+
+GET {{Rancho_s_Wilson_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
