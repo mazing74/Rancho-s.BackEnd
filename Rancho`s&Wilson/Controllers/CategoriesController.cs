@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Rancho_s.Services.DTOs;
 using Rancho_s.Services.Services;
 
@@ -62,6 +63,8 @@ namespace Rancho_s_Wilson.Controllers
         // Admin only — create a new menu section
         // ─────────────────────────────────────────────────────
         [HttpPost]
+        [Authorize(Roles = "Admin")]
+
         public async Task<ActionResult<CategoryDto>> Create([FromBody] CreateCategoryDto dto)
         {
             try
@@ -80,6 +83,8 @@ namespace Rancho_s_Wilson.Controllers
         // Admin only — update category info
         // ─────────────────────────────────────────────────────
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
+
         public async Task<ActionResult<CategoryDto>> Update(int id, [FromBody] UpdateCategoryDto dto)
         {
             try
@@ -102,6 +107,8 @@ namespace Rancho_s_Wilson.Controllers
         // Admin only — soft delete a category
         // ─────────────────────────────────────────────────────
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
+
         public async Task<IActionResult> Delete(int id)
         {
             var result = await _categoryService.DeleteCategoryAsync(id);

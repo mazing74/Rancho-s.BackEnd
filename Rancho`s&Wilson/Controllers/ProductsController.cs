@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Rancho_s.Services.DTOs;
 using Rancho_s.Services.Services;
@@ -56,6 +57,8 @@ namespace Rancho_s_Wilson.Controllers
         // Admin only — create new product
         // ─────────────────────────────────────────
         [HttpPost]
+        [Authorize(Roles = "Admin")]
+
         public async Task<ActionResult<ProductDto>> Create([FromBody]CreateProductDto dto)
         {
             try
@@ -74,6 +77,7 @@ namespace Rancho_s_Wilson.Controllers
         // Admin only — update a product fully
         // ─────────────────────────────────────────
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<ProductDto>> Update(int id, [FromBody] UpdateProductDto dto)
         {
             try
@@ -96,6 +100,8 @@ namespace Rancho_s_Wilson.Controllers
         // Admin only — soft delete a product
         // ─────────────────────────────────────────
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
+
         public async Task<IActionResult> Delete(int id)
         {
             var result = await _productService.DeleteProductAsync(id);
@@ -111,6 +117,8 @@ namespace Rancho_s_Wilson.Controllers
         // Kitchen/Admin — mark item as available or sold out
         // ─────────────────────────────────────────
         [HttpPatch("{id}/toggle-availability")]
+        [Authorize(Roles = "Admin")]
+
         public async Task<IActionResult> ToggleAvailability(int id)
         {
             var result = await _productService.ToggleAvailabilityAsync(id);
