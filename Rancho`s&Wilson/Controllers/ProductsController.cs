@@ -22,7 +22,7 @@ namespace Rancho_s_Wilson.Controllers
         // Public — anyone can browse the menu
         // ─────────────────────────────────────────
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<ActionResult<IReadOnlyList<ProductDto>>> GetAll()
         {
             var products = await _productService.GetAllProductsAsync();
             return Ok(products);
@@ -32,7 +32,7 @@ namespace Rancho_s_Wilson.Controllers
         // Public — get one product's full details
         // ─────────────────────────────────────────
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<ActionResult<ProductDto>> GetById(int id)
         {
             var product = await _productService.GetProductByIdAsync(id);
             if (product == null)
@@ -45,7 +45,7 @@ namespace Rancho_s_Wilson.Controllers
         // Public — get all products in a category
         // ─────────────────────────────────────────
         [HttpGet("category/{categoryId}")]
-        public async Task<IActionResult> GetByCategory(int categoryId)
+        public async Task<ActionResult<IReadOnlyList<ProductDto>>> GetByCategory(int categoryId)
         {
             var products = await _productService.GetProductsByCategoryAsync(categoryId);
             return Ok(products);
