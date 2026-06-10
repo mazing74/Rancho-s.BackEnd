@@ -5,9 +5,8 @@ using Rancho_s.Services.Services;
 
 namespace Rancho_s_Wilson.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class AuthController : ControllerBase
+  
+    public class AuthController : APiBaseController
     {
         private readonly AuthService _authService;
 

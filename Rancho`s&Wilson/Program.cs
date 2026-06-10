@@ -29,6 +29,36 @@ namespace Rancho_s_Wilson
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 
+
+
+            // ── ADD Microsoft Identity ────────────────────────────────────
+
+            builder.Services.AddIdentity<AppUser, AppRole>(options =>
+            {
+                // Password rules
+                // Keep them reasonable — not too strict for a restaurant app
+                options.Password.RequireDigit = true;
+                options.Password.RequiredLength = 6;
+                options.Password.RequireUppercase = false;  // relaxed
+                options.Password.RequireNonAlphanumeric = false;  // relaxed
+
+                // User rules
+                options.User.RequireUniqueEmail = true;
+
+                // Lockout — after 5 wrong attempts, lock for 5 minutes
+                // Protects against brute force attacks
+                options.Lockout.MaxFailedAccessAttempts = 4;
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+            })
+
+               .AddEntityFrameworkStores<Rancho_sDbContext>()
+               // AddDefaultTokenProviders adds support for
+               // password reset tokens, email confirmation tokens later
+               .AddDefaultTokenProviders();
+
+
+
+
             // ── JWT Authentication ────────────────────────────────────────
             var jwtSecret = builder.Configuration["JWT:Secret"]!;
 
@@ -43,8 +73,8 @@ namespace Rancho_s_Wilson
             {
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
                     ValidateLifetime = true,    // Reject expired tokens
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = builder.Configuration["JWT:Issuer"],
@@ -56,29 +86,6 @@ namespace Rancho_s_Wilson
 
             builder.Services.AddAuthorization();
 
-            // ── ADD Microsoft Identity ────────────────────────────────────
-
-            builder.Services.AddIdentity<AppUser, AppRole>(options =>
-            {
-                // Password rules
-                // Keep them reasonable — not too strict for a restaurant app
-                options.Password.RequireDigit = true;
-                options.Password.RequiredLength = 8;
-                options.Password.RequireUppercase = true;  // relaxed
-                options.Password.RequireNonAlphanumeric = false;  // relaxed
-
-                // User rules
-                options.User.RequireUniqueEmail = true;
-
-                // Lockout — after 5 wrong attempts, lock for 5 minutes
-                // Protects against brute force attacks
-                options.Lockout.MaxFailedAccessAttempts = 4;
-                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
-            })
-               .AddEntityFrameworkStores<Rancho_sDbContext>()
-               // AddDefaultTokenProviders adds support for
-               // password reset tokens, email confirmation tokens later
-               .AddDefaultTokenProviders();
 
 
 
@@ -95,8 +102,8 @@ namespace Rancho_s_Wilson
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     Name = "Authorization",
-                    Type = SecuritySchemeType.ApiKey,
-                    Scheme = "Bearer",
+                    Type = SecuritySchemeType.Http,   
+                    Scheme = "bearer",
                     BearerFormat = "JWT",
                     In = ParameterLocation.Header,
                     Description = "Enter: Bearer {your token here}"
@@ -116,18 +123,19 @@ namespace Rancho_s_Wilson
             Array.Empty<string>()
         }
     });
-            }); 
+            });
             #endregion
 
             // ── Dependency Injection — Register your layers ───────────
             builder.Services.AddScoped<IProductRepository, ProductRepository>();
             builder.Services.AddScoped<IAuthRepository, AuthRepository>();
+            builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 
+            builder.Services.AddScoped<CategoryService>();
             builder.Services.AddScoped<ProductService>();
             builder.Services.AddScoped<AuthService>();
 
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
             #endregion
 
 
@@ -139,6 +147,7 @@ namespace Rancho_s_Wilson
             using var scope = app.Services.CreateScope();
 
             var services = scope.ServiceProvider;
+
             var loggerFactory = services.GetRequiredService<ILoggerFactory>();
             try
             {

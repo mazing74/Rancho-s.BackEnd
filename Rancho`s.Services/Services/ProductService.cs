@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Rancho_s.Services.Services
 {
-    public class ProductService
+    public class    ProductService
     {
         private readonly IProductRepository _productRepository;
 

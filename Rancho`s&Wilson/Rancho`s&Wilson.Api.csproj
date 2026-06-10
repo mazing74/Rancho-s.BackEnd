@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>Rancho_s_Wilson</RootNamespace>
+    <UserSecretsId>1d3f2698-7e28-4f6b-9da4-cb43b7cba3d1</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

@@ -5,9 +5,8 @@ using Rancho_s.Services.Services;
 
 namespace Rancho_s_Wilson.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class CategoriesController : ControllerBase
+ 
+    public class CategoriesController : APiBaseController
     {
         private readonly CategoryService _categoryService;
 
