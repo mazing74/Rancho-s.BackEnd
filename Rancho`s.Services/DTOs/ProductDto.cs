@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Rancho_s.core.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,7 +11,7 @@ namespace Rancho_s.Services.DTOs
         // What the frontend RECEIVES when asking for a product
         public class ProductDto
         {
-            public int Id { get; set; }
+        public int Id { get; set; }
             public string Name { get; set; } = string.Empty;
             public string NameAr { get; set; } = string.Empty;
             public string Description { get; set; } = string.Empty;
@@ -20,10 +21,12 @@ namespace Rancho_s.Services.DTOs
             public bool IsFeatured { get; set; }
             public int CategoryId { get; set; }
             public int? CalorieCount { get; set; }
-        }
+           public string CategoryName { get; set; }
 
-        // What the frontend SENDS when creating a product (admin)
-        public class CreateProductDto
+    }
+
+    // What the frontend SENDS when creating a product (admin)
+    public class CreateProductDto
         {
             public string Name { get; set; } = string.Empty;
             public string NameAr { get; set; } = string.Empty;

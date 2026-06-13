@@ -24,7 +24,7 @@ namespace Rancho_s_Wilson.Controllers
         [HttpGet]
         public async Task<ActionResult<IReadOnlyList<ProductDto>>> GetAll()
         {
-            var products = await _productService.GetAllProductsAsync();
+            var products = await _productService.GetAllProductsWithAllCategories();
             return Ok(products);
         }
         // ─────────────────────────────────────────
@@ -54,7 +54,7 @@ namespace Rancho_s_Wilson.Controllers
         // ─────────────────────────────────────────
         // POST /api/products
         // Admin only — create new product
-        // ─────────────────────────────────────────
+        // ─────────────────────────────────────────        
         [HttpPost]
         [Authorize(Roles = "Admin")]
 

@@ -1,5 +1,6 @@
 ﻿using Rancho_s.core.Entities;
 using Rancho_s.core.Interfaces;
+using Rancho_s.core.Specfction;
 using Rancho_s.Services.DTOs;
 using System;
 using System.Collections.Generic;
@@ -27,6 +28,12 @@ namespace Rancho_s.Services.Services
       public async Task<IReadOnlyList<ProductDto?>> GetProductsByCategoryAsync(int categoryId)
         {
             var products = await _productRepository.GetProductsByCategoryAsync(categoryId);
+            return products.Select(MapToDto).ToList();
+        }
+        public async Task<IReadOnlyList<ProductDto>> GetAllProductsWithAllCategories()
+        {
+            var includes = new ProductWithCategorySpec();
+            var products = await _productRepository.GetAllWithSpecAsync(includes);
             return products.Select(MapToDto).ToList();
         }
         public async Task<ProductDto?> GetProductByIdAsync(int productId)
@@ -135,7 +142,8 @@ namespace Rancho_s.Services.Services
             IsAvailable = p.IsAvailable,
             IsFeatured = p.IsFeatured,
             CategoryId = p.CategoryId,
-            CalorieCount = p.CalorieCount
+            CalorieCount = p.CalorieCount,
+            CategoryName = p.Category != null ? p.Category.Name : null
         };
     }
 }
