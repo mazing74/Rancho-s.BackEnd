@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Rancho_s.Services.Services
 {
-    public class    ProductService
+    public class  ProductService
     {
         private readonly IProductRepository _productRepository;
 
@@ -36,6 +36,18 @@ namespace Rancho_s.Services.Services
             var products = await _productRepository.GetAllWithSpecAsync(includes);
             return products.Select(MapToDto).ToList();
         }
+
+        public async Task<ProductDto?> GetProductByIdWithSpec(int id)
+        {
+            var spec = new ProductWithCategorySpec(id);
+            var product = await _productRepository.GetByIdWithSpecAsync(spec);
+
+            if (product == null || !product.IsActive)
+                return null;
+
+            return MapToDto(product);
+        }
+
         public async Task<ProductDto?> GetProductByIdAsync(int productId)
         {
         var product = await _productRepository.GetByIdAsync(productId);

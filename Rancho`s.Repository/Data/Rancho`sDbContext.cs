@@ -13,13 +13,16 @@ namespace Rancho_s.Repository.Data
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(Rancho_sDbContext).Assembly);
 
             modelBuilder.Entity<AppRole>().HasData(
-    new AppRole { Id = 1, Name = "Admin", NormalizedName = "ADMIN", Description = "Restaurant administrator" },
-    new AppRole { Id = 2, Name = "Customer", NormalizedName = "CUSTOMER", Description = "Regular customer" },
-    new AppRole { Id = 3, Name = "KitchenStaff", NormalizedName = "KITCHENSTAFF", Description = "Kitchen team member" }
-);
+            new AppRole { Id = 1, Name = "Admin", NormalizedName = "ADMIN", Description = "Restaurant administrator" },
+            new AppRole { Id = 2, Name = "Customer", NormalizedName = "CUSTOMER", Description = "Regular customer" },
+            new AppRole { Id = 3, Name = "KitchenStaff", NormalizedName = "KITCHENSTAFF", Description = "Kitchen team member" });
         }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Product> Products { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderItem> OrderItems { get; set; }
+        public DbSet<OrderItemOption> OrderItemOptions { get; set; }
+        public DbSet<OrderStatusHistory> OrderStatusHistory { get; set; }
 
     }
 }

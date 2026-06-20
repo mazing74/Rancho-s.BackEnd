@@ -14,7 +14,7 @@ namespace Rancho_s.Repository.Repositories
 
         public static IQueryable<T> GetQuery(IQueryable<T> inputQuery, Ispecification<T> specification) 
         {
-            var query = inputQuery;
+            var query = inputQuery; 
 
             if(specification.Criteria != null)
             {
