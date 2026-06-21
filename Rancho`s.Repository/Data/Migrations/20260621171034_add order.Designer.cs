@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Rancho_s.Repository.Data;
 
@@ -11,9 +12,11 @@ using Rancho_s.Repository.Data;
 namespace Rancho_s.Repository.Data.Migrations
 {
     [DbContext(typeof(Rancho_sDbContext))]
-    partial class Rancho_sDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260621171034_add order")]
+    partial class addorder
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

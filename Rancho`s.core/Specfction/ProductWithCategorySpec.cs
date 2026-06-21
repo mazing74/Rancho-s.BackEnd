@@ -16,9 +16,9 @@ namespace Rancho_s.core.Specfction
            Includes.Add(p => p.Category);
         }
 
-        public ProductWithCategorySpec(Expression<Func<Product, bool>> criteria ):base(criteria)
+        public ProductWithCategorySpec(int id ) :base(p=>p.Id==id) 
         {
-            
+            Includes.Add(p => p.Category);
         }
     }
 }
