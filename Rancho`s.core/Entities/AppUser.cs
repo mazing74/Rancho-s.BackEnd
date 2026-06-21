@@ -19,5 +19,7 @@ namespace Rancho_s.core.Entities
         {
             get; set;
         }
+        public ICollection<Order> Orders { get; set; } = new HashSet<Order>();
+
     }
 }

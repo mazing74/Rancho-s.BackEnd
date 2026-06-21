@@ -38,5 +38,11 @@ namespace Rancho_s.core.Entities
         public int CategoryId { get; set; }
         // This is how you say "one Product BELONGS TO one Category"
         public Category? Category { get; set; }
+
+        // A product can have multiple option groups
+        // Classic Burger has: "Size"
+        // Tender Box has: "Flavor" + "Sauce Choice"
+        public ICollection<OptionGroup> OptionGroups { get; set; }
+            = new List<OptionGroup>();
     }
 }

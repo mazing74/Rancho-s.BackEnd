@@ -10,7 +10,9 @@ namespace Rancho_s.Repository.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder); // this will call all identity tables
-            modelBuilder.ApplyConfigurationsFromAssembly(typeof(Rancho_sDbContext).Assembly);
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(Rancho_sDbContext).Assembly); 
+            // بتلف على كل الـ كلاسات اللي فيها
+            // IEntityTypeConfiguration وتطبّقهم كلهم أوتوماتيك 
 
             modelBuilder.Entity<AppRole>().HasData(
             new AppRole { Id = 1, Name = "Admin", NormalizedName = "ADMIN", Description = "Restaurant administrator" },
@@ -23,6 +25,10 @@ namespace Rancho_s.Repository.Data
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<OrderItemOption> OrderItemOptions { get; set; }
         public DbSet<OrderStatusHistory> OrderStatusHistory { get; set; }
+        public DbSet<OptionGroup> OptionGroups { get; set; }  
+        public DbSet<Option> Options { get; set; }  
+
+
 
     }
 }
