@@ -1,6 +1,6 @@
 # 🍔 Rancho's Restaurant — Backend API
 
-A production-ready RESTful API for **Rancho's Restaurant** built with ASP.NET Core, following Clean Architecture (Onion Architecture) principles. This backend powers the full restaurant ordering system — from menu browsing to order tracking.
+A production-ready RESTful API for **Rancho's Restaurant** — a real client project. Built with ASP.NET Core 8 following Onion Architecture principles. Powers the full restaurant ordering system — from menu browsing to kitchen order management.
 
 ---
 
@@ -10,9 +10,10 @@ A production-ready RESTful API for **Rancho's Restaurant** built with ASP.NET Co
 |-------|-----------|
 | Framework | ASP.NET Core 8 Web API |
 | Database | SQL Server |
-| ORM | Entity Framework Core 8 |
+| ORM | Entity Framework Core 8 (Fluent API) |
 | Authentication | ASP.NET Core Identity + JWT Bearer |
 | Architecture | Onion Architecture (4 layers) |
+| Mapping | AutoMapper |
 | API Docs | Swagger / OpenAPI |
 
 ---
@@ -22,18 +23,35 @@ A production-ready RESTful API for **Rancho's Restaurant** built with ASP.NET Co
 This project follows **Onion Architecture** — a clean separation of concerns across 4 layers:
 
 ```
-┌─────────────────────────────────────┐
-│           API / PL Layer            │  ← Controllers, Middleware, Program.cs
-├─────────────────────────────────────┤
-│          Service Layer              │  ← Business Logic, DTOs, Services
-├─────────────────────────────────────┤
-│        Repository Layer             │  ← EF Core, DbContext, Repositories
-├─────────────────────────────────────┤
-│           Core Layer                │  ← Entities, Interfaces, Enums
-└─────────────────────────────────────┘
+┌──────────────────────────────────────────────────────┐
+│                   API / PL Layer                     │
+│         Controllers, Middleware, Program.cs          │
+├──────────────────────────────────────────────────────┤
+│                   Service Layer                      │
+│          Business Logic, DTOs, AutoMapper            │
+├──────────────────────────────────────────────────────┤
+│                 Repository Layer                     │
+│      EF Core, DbContext, Specifications, Repos       │
+├──────────────────────────────────────────────────────┤
+│                    Core Layer                        │
+│           Entities, Interfaces, Enums                │
+└──────────────────────────────────────────────────────┘
 ```
 
-**Dependency Rule:** Every layer depends only on the layer below it. The Core layer has zero external dependencies.
+**Dependency Rule:** Every layer depends only on the layer below it. The **Core layer has zero external dependencies** — it knows nothing about EF Core, ASP.NET, or any framework.
+
+---
+
+## 🎯 Design Patterns Used
+
+| Pattern | Where | Why |
+|---------|-------|-----|
+| **Onion Architecture** | Entire solution | Zero coupling between layers |
+| **Generic Repository** | `GenericRepository<T>` | Reusable data access for all entities |
+| **Specification Pattern** | Repository layer | Composable, testable query logic |
+| **DTO Pattern** | Service layer | Never expose domain entities to clients |
+| **AutoMapper Profiles** | Service layer | Clean mapping between entities and DTOs |
+| **Soft Delete** | All entities | Preserve order history integrity |
 
 ---
 
@@ -42,20 +60,20 @@ This project follows **Onion Architecture** — a clean separation of concerns a
 ```
 RanchosAPI/
 │
-├── Core/                          # Domain layer — no dependencies
+├── Core/                              # Domain layer — zero dependencies
 │   ├── Entities/
-│   │   ├── AppUser.cs             # Identity user (extended)
-│   │   ├── AppRole.cs             # Identity role (extended)
+│   │   ├── AppUser.cs                 # Extended IdentityUser<int>
+│   │   ├── AppRole.cs                 # Extended IdentityRole<int>
 │   │   ├── Category.cs
 │   │   ├── Product.cs
-│   │   ├── OptionGroup.cs         # e.g. "Size", "Single or Double"
-│   │   ├── Option.cs              # e.g. "150g", "200g", "Single"
+│   │   ├── OptionGroup.cs             # e.g. "Size", "Single or Double"
+│   │   ├── Option.cs                  # e.g. "150g +0LE", "200g +30LE"
 │   │   ├── Order.cs
-│   │   ├── OrderItem.cs
-│   │   ├── OrderItemOption.cs
-│   │   ├── OrderStatusHistory.cs
-│   │   ├── BaseEntity.cs
-│   │   └── Enums.cs               # OrderStatus, OrderType, PaymentMethod
+│   │   ├── OrderItem.cs               # Price snapshot at order time
+│   │   ├── OrderItemOption.cs         # Selected option snapshot
+│   │   ├── OrderStatusHistory.cs      # Full audit trail
+│   │   ├── BaseEntity.cs              # Id, CreatedAt, UpdatedAt
+│   │   └── Enums.cs                   # OrderStatus, OrderType, PaymentMethod
 │   └── Interfaces/
 │       ├── IGenericRepository.cs
 │       ├── IProductRepository.cs
@@ -64,25 +82,36 @@ RanchosAPI/
 │       ├── IOrderRepository.cs
 │       └── IAuthRepository.cs
 │
-├── Repository/                    # Data access layer
+├── Repository/                        # Data access layer
 │   ├── Data/
-│   │   ├── AppDbContext.cs        # IdentityDbContext
-│   │   └── Configurations/        # EF Core Fluent API configs
+│   │   ├── AppDbContext.cs            # IdentityDbContext<AppUser, AppRole, int>
+│   │   ├── DataSeed/
+│   │   │   └── RanchosSeed.cs         # Menu seed data
+│   │   └── Configurations/            # EF Core Fluent API per entity
+│   │       ├── ProductConfiguration.cs
+│   │       ├── CategoryConfiguration.cs
+│   │       ├── OrderConfiguration.cs
+│   │       ├── OrderItemConfiguration.cs
+│   │       └── ...
 │   └── Repositories/
-│       ├── GenericRepository.cs
+│       ├── GenericRepository.cs       # Generic Repo + Specification support
 │       ├── ProductRepository.cs
 │       ├── CategoryRepository.cs
 │       ├── OptionGroupRepository.cs
 │       ├── OrderRepository.cs
 │       └── AuthRepository.cs
 │
-├── Service/                       # Business logic layer
+├── Service/                           # Business logic layer
 │   ├── DTOs/
 │   │   ├── AuthDto.cs
 │   │   ├── ProductDto.cs
 │   │   ├── CategoryDto.cs
 │   │   ├── OptionDto.cs
 │   │   └── OrderDto.cs
+│   ├── Mapping/                       # AutoMapper profiles
+│   │   ├── ProductMappingProfile.cs
+│   │   ├── OrderMappingProfile.cs
+│   │   └── OptionMappingProfile.cs
 │   └── Services/
 │       ├── AuthService.cs
 │       ├── ProductService.cs
@@ -90,8 +119,9 @@ RanchosAPI/
 │       ├── OptionService.cs
 │       └── OrderService.cs
 │
-└── API/                           # Presentation layer
+└── API/                               # Presentation layer
     ├── Controllers/
+    │   ├── APiBaseController.cs        # Shared [ApiController] + [Route]
     │   ├── AuthController.cs
     │   ├── ProductsController.cs
     │   ├── CategoriesController.cs
@@ -99,9 +129,9 @@ RanchosAPI/
     │   ├── OrdersController.cs
     │   └── UploadsController.cs
     ├── Middleware/
-    │   └── ExceptionMiddleware.cs
+    │   └── ExceptionMiddleware.cs      # Global JSON error handling
     ├── Services/
-    │   └── ImageService.cs
+    │   └── ImageService.cs            # Local image storage
     ├── Errors/
     │   └── AppException.cs
     └── Program.cs
@@ -112,65 +142,69 @@ RanchosAPI/
 ## ✅ Features Implemented
 
 ### 🔐 Authentication & Authorization
-- Register / Login with JWT tokens
-- ASP.NET Core Identity (password hashing, lockout, validation)
-- Role-based access control: **Admin**, **Customer**, **KitchenStaff**
-- Protected endpoints with `[Authorize(Roles = "...")]`
+- Register / Login with JWT Bearer tokens
+- ASP.NET Core Identity — password hashing, account lockout (5 attempts → 5 min lock)
+- Role-based authorization: **Admin**, **Customer**, **KitchenStaff**
+- `[Authorize(Roles = "...")]` on all protected endpoints
+- JWT scheme explicitly set as default to override Identity's cookie scheme
 
 ### 🍽️ Menu System
-- Full **Category** CRUD (Beef Burger, Fried Chicken, Pasta, Rice, Sides...)
-- Full **Product** CRUD with Arabic name support
-- **Product Options & Sizes** — Single/Double, 150g/200g/300g/400g
-- Option groups with required/optional selection types
-- Soft delete (items never hard deleted — orders stay intact)
-- Featured items, availability toggle
+- Full **Category** CRUD — Beef Burger, Fried Chicken, Pasta, Rice, Sides, Drinks...
+- Full **Product** CRUD — Arabic & English name support
+- **Product Options & Sizes** — weight-based (150g/200g/300g/400g) and Single/Double
+- Option groups with `single` / `multiple` selection types and `IsRequired` flag
+- Soft delete on all menu items — order history always stays intact
+- Featured items flag, real-time availability toggle
 
 ### 📦 Order System
 - Place orders: **Delivery**, **Pickup**, **Dine-in**
-- Server-side price calculation — client prices never trusted
-- Price snapshots on order items (historical accuracy)
-- Full order status workflow:
+- **Server-side price calculation** — client prices never trusted
+- **Price snapshots** — ProductName, UnitPrice, OptionName copied at order time
+- Option validation — selected options must belong to the ordered product
+- Full status workflow with transition validation:
   ```
   Pending → Confirmed → Preparing → Ready → OutForDelivery → Delivered
-                                          ↘ Cancelled / Rejected
+                    ↘ Rejected          ↘ Cancelled
   ```
-- Complete status change history with timestamps
-- Customer order history & cancellation (Pending only)
+- Complete `OrderStatusHistory` audit trail — who changed what and when
+- Customer order history, order detail, and cancellation (Pending only)
 
 ### 🖼️ Image Upload
-- Upload product images to server (`wwwroot/images/products/`)
-- File type validation (jpg, jpeg, png, webp)
-- File size limit (5MB)
-- Unique filename generation (GUID-based)
-- Auto-delete old image when product image is updated
+- Upload product images → saved to `wwwroot/images/products/`
+- File type validation (jpg, jpeg, png, webp only)
+- File size limit: 5MB max
+- GUID-based unique filenames — no collisions
+- Auto-delete old image file when product image is replaced
 
 ### 🛡️ Security & Quality
-- Global exception handling middleware (clean JSON errors always)
-- CORS configured for Angular frontend (`localhost:4200`)
-- Enum values stored as strings in DB (human-readable in SSMS)
-- Database indexes on frequently queried columns
-- `DeleteBehavior.Restrict` on critical relationships
+- Global exception middleware — consistent JSON error shape across all endpoints
+- CORS policy configured for Angular (`localhost:4200`)
+- Enums stored as strings in DB — human-readable in SSMS
+- Database indexes on `CategoryId`, `CustomerId`, `Status`, `BranchId`, `CreatedAt`
+- `DeleteBehavior.Restrict` on Customer→Orders — prevents accidental data loss
+- `DeleteBehavior.Cascade` on Order→OrderItems — clean order deletion
 
 ---
 
 ## 🗄️ Database Schema
 
 ```
-AspNetUsers ──────────────────────────────┐
-AspNetRoles                               │
-AspNetUserRoles                           │
-                                          │
-Categories                                │
-  └── Products                            │
-        ├── OptionGroups                  │
-        │     └── Options                 │
-        └── ProductImages                 │
-                                          │
-Orders ◄──────────────────────────────────┘
-  ├── OrderItems
-  │     └── OrderItemOptions
-  └── OrderStatusHistory
+AspNetUsers (AppUser)
+  └── Orders (CustomerId FK, Restrict)
+        ├── OrderItems
+        │     └── OrderItemOptions    ← snapshots of selected options
+        └── OrderStatusHistory        ← full audit trail
+
+AspNetRoles (AppRole)
+AspNetUserRoles
+
+Categories
+  └── Products (CategoryId FK, Restrict)
+        └── OptionGroups
+              └── Options
 ```
+
+**14+ tables total.** All relationships explicitly configured via EF Core Fluent API.
 
 ---
 
@@ -180,40 +214,45 @@ Orders ◄───────────────────────�
 | Method | Endpoint | Access | Description |
 |--------|----------|--------|-------------|
 | POST | `/api/auth/register` | Public | Create customer account |
-| POST | `/api/auth/login` | Public | Login, get JWT token |
+| POST | `/api/auth/login` | Public | Login, receive JWT token |
 
-### Menu
+### Categories
 | Method | Endpoint | Access | Description |
 |--------|----------|--------|-------------|
 | GET | `/api/categories` | Public | All active categories |
-| GET | `/api/categories/{id}/products` | Public | Category with products |
+| GET | `/api/categories/{id}` | Public | Single category |
+| GET | `/api/categories/{id}/products` | Public | Category with all products |
 | POST | `/api/categories` | Admin | Create category |
 | PUT | `/api/categories/{id}` | Admin | Update category |
-| DELETE | `/api/categories/{id}` | Admin | Soft delete category |
+| DELETE | `/api/categories/{id}` | Admin | Soft delete |
+
+### Products
+| Method | Endpoint | Access | Description |
+|--------|----------|--------|-------------|
 | GET | `/api/products` | Public | All active products |
-| GET | `/api/products/{id}` | Public | Product with options |
+| GET | `/api/products/{id}` | Public | Product with option groups |
 | GET | `/api/products/category/{id}` | Public | Products by category |
 | POST | `/api/products` | Admin | Create product |
 | PUT | `/api/products/{id}` | Admin | Update product |
-| DELETE | `/api/products/{id}` | Admin | Soft delete product |
+| DELETE | `/api/products/{id}` | Admin | Soft delete |
 | PATCH | `/api/products/{id}/toggle-availability` | Admin/Kitchen | Mark sold out |
 
 ### Options
 | Method | Endpoint | Access | Description |
 |--------|----------|--------|-------------|
-| GET | `/api/options/product/{id}` | Public | Get product options |
-| POST | `/api/options/groups` | Admin | Create option group |
+| GET | `/api/options/product/{id}` | Public | All option groups for a product |
+| POST | `/api/options/groups` | Admin | Create option group + options |
 | DELETE | `/api/options/groups/{id}` | Admin | Delete option group |
 
 ### Orders
 | Method | Endpoint | Access | Description |
 |--------|----------|--------|-------------|
 | POST | `/api/orders` | Customer | Place an order |
-| GET | `/api/orders/my-orders` | Customer | Order history |
-| GET | `/api/orders/{id}` | Customer/Admin | Order details |
+| GET | `/api/orders/my-orders` | Customer | My order history |
+| GET | `/api/orders/{id}` | Customer/Admin | Full order details |
 | POST | `/api/orders/{id}/cancel` | Customer | Cancel pending order |
-| PATCH | `/api/orders/{id}/status` | Admin/Kitchen | Update status |
-| GET | `/api/orders/kitchen` | Admin/Kitchen | Kitchen dashboard |
+| PATCH | `/api/orders/{id}/status` | Admin/Kitchen | Update order status |
+| GET | `/api/orders/kitchen` | Admin/Kitchen | Kitchen live dashboard |
 | GET | `/api/orders/admin` | Admin | All orders with filters |
 
 ### Uploads
@@ -228,8 +267,9 @@ Orders ◄───────────────────────�
 
 ### Prerequisites
 - [.NET 8 SDK](https://dotnet.microsoft.com/download)
-- [SQL Server](https://www.microsoft.com/en-us/sql-server) (or SQL Server Express)
-- [Visual Studio 2022](https://visualstudio.microsoft.com/) or VS Code
+- [SQL Server](https://www.microsoft.com/en-us/sql-server) or SQL Server Express
+- [Visual Studio 2022](https://visualstudio.microsoft.com/)
+- [SSMS](https://learn.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms)
 
 ### 1. Clone the Repository
 ```bash
@@ -237,10 +277,7 @@ git clone https://github.com/yourusername/ranchos-api.git
 cd ranchos-api
 ```
 
-### 2. Configure the Connection String
-
-Open `API/appsettings.json` and update:
-
+### 2. Configure appsettings.json
 ```json
 {
   "ConnectionStrings": {
@@ -255,90 +292,96 @@ Open `API/appsettings.json` and update:
 }
 ```
 
-> ⚠️ **Never commit real secrets to GitHub.** Use environment variables or `appsettings.Development.json` (add to `.gitignore`) for sensitive values.
+> ⚠️ Never commit real secrets. Use `appsettings.Development.json` locally and environment variables in production.
 
-### 3. Run Migrations
+### 3. Apply Migrations
 
-Open **Package Manager Console** in Visual Studio, set Default Project to `Repository`, then run:
+Open **Package Manager Console**, set Default Project to `Repository`:
 
 ```powershell
 Add-Migration InitialCreate -StartupProject API
 Update-Database -StartupProject API
 ```
 
-This will:
-- Create the database
-- Create all tables
-- Seed the 3 default roles (Admin, Customer, KitchenStaff)
+This creates the database, all tables, and seeds the 3 default roles automatically.
 
-### 4. Run the Project
+### 4. Run
 
+Press **F5** in Visual Studio or:
 ```bash
-cd API
-dotnet run
+dotnet run --project API
 ```
 
-Or press **F5** in Visual Studio.
-
 ### 5. Open Swagger
-
-Navigate to:
 ```
 https://localhost:{port}/swagger
 ```
 
 ---
 
-## 🔑 How to Test Protected Endpoints in Swagger
+## 🔑 Testing Protected Endpoints in Swagger
 
-1. Call `POST /api/auth/register` to create an account
-2. Call `POST /api/auth/login` to get your token
-3. Click the **Authorize 🔒** button at the top of Swagger
-4. Enter: `Bearer eyJhbGci...` (your token)
-5. Now all protected endpoints are unlocked
+```
+1. POST /api/auth/register  → create an account
+2. POST /api/auth/login     → copy the token from the response
+3. Click Authorize 🔒       → enter:  Bearer eyJhbGci...
+4. All protected endpoints are now unlocked
+```
 
 ---
 
 ## 🌱 Seed Data
 
-After running migrations, the following roles are automatically seeded:
+Roles are automatically seeded on first migration:
 
-| Id | Role | Description |
-|----|------|-------------|
+| Id | Role | Access |
+|----|------|--------|
 | 1 | Admin | Full system access |
-| 2 | Customer | Can browse menu and place orders |
-| 3 | KitchenStaff | Can view and update order status |
+| 2 | Customer | Browse menu, place orders |
+| 3 | KitchenStaff | View & update order status |
 
-To create your first **Admin** user, register normally via the API then manually update the `AspNetUserRoles` table in SSMS to assign RoleId = 1.
+> To create your first Admin: register via API → open SSMS → insert into `AspNetUserRoles` with `RoleId = 1`.
 
 ---
 
 ## 🗺️ Roadmap
 
-- [x] Onion Architecture setup
-- [x] Microsoft Identity authentication
-- [x] Menu system (Categories + Products)
-- [x] Product Options & Sizes
-- [x] Order system (Delivery/Pickup/DineIn)
-- [x] Image upload
-- [x] Kitchen dashboard endpoint
+- [x] Onion Architecture — 4 layers
+- [x] Generic Repository + Specification Pattern
+- [x] AutoMapper profiles (Product, Order, Option)
+- [x] ASP.NET Core Identity + JWT authentication
+- [x] Role-based authorization
+- [x] Menu system — Categories, Products, Options & Sizes
+- [x] Customer ↔ Order relationship (Restrict delete)
+- [x] Complete order lifecycle — Delivery / Pickup / DineIn
+- [x] Server-side price calculation with option pricing
+- [x] Price & option snapshots on order items
+- [x] Order status workflow with audit history
+- [x] Image upload with validation
+- [x] Global exception middleware
+- [x] CORS for Angular
 - [ ] Coupons & Discounts
-- [ ] Input validation (FluentValidation)
-- [ ] Pagination on list endpoints
+- [ ] FluentValidation
+- [ ] Pagination
 - [ ] Admin sales reports
-- [ ] SignalR real-time order notifications
+- [ ] SignalR real-time kitchen notifications
 - [ ] Angular frontend
 
 ---
 
-## 👨‍💻 Author
+## 👨‍💻 About This Project
 
-Built step by step as a real-world learning project.
+This is a **real client project** for Rancho's Restaurant — not a tutorial clone.
 
-Restaurant: **Rancho's** — Feel The Taste 🍔
+Built entirely from scratch as a junior-to-mid level portfolio project, covering real-world concerns: security, data integrity, price calculation, order workflows, and clean architecture.
+
+**Restaurant:** Rancho's — *Feel The Taste* 🍔
+**Location:** Mit Ghamr, Egypt
+**Social:** [@RanchosEG](https://instagram.com/RanchosEG)
 
 ---
 
 ## 📄 License
 
-This project is for educational and portfolio purposes.
+Built for educational and portfolio purposes.
+ENDOFFILE
